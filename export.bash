@@ -1,12 +1,8 @@
-#!/ Bin bash
+#!/bin/bash
 echo "Exporting ns ,except default and system"
 kubectl get --export -o=json ns |  
 jq '.items[] | select(.metadata.name!="kube-system") | select(.metadata.name!="default") | del(.status, .metadata.uid, .metadata.selfLink, .metadata.resourceVersion, .metadata.creationTimestamp, .metadata.generation )' > ./cluster-dump/ns.json
 cat ./cluster-dump/ns.json
-
-
-
-
 
 echo "Dumping cluster resources"
 for ns in $(jq -r '.metadata.name' < ./cluster-dump/ns.json);do kubectl --namespace="${ns}" get all --export -o=json | 
